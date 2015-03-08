@@ -27,6 +27,7 @@ public class Server extends JFrame{
     private JTextArea jta = new JTextArea();
     private String host;
     private int port;
+    private int i = 1;
     
 public static void main(String[] zero) throws IOException {
 
@@ -46,41 +47,68 @@ public static void main(String[] zero) throws IOException {
         //create server socket
         ServerSocket server = new ServerSocket(port);
         jta.append("Sever started at: "+ new Date()+'\n');
-                int i = 1;
+                
+                while(true){
         //listen for connection request
             Socket socket = server.accept();
+            //cliet host name and ip 
+            InetAddress inetAddress = socket.getInetAddress();
+            jta.append("Client"+i+" with ip " + inetAddress.getHostAddress()+" and with name "+inetAddress.getHostName()+ " is connected.");
             
-            jta.append("Client"+i+" with ip " + socket.getRemoteSocketAddress().toString() + " is connected.");
-            
-        //create data input and output streams
+        //create a new thread for the connection
+            HandleClient task = new HandleClient(socket);
+        //start new thread
+            new Thread(task).start();
+                i++;
+                }
+        }
+        catch(IOException ex){
+            System.out.println(ex);
+        }
+
+      
+    }
+
+    class HandleClient implements Runnable{
+        private Socket socket; 
+        
+        //construct a thread
+        public HandleClient(Socket socket){
+            this.socket = socket;
+        }
+        
+        @Override
+        public void run(){
+            try{
+             //create data input and output streams
         //reading inout stream from client
             InputStream is = socket.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
             
-                    //Sending the response back to the client.
-                OutputStream os = socket.getOutputStream();
-                OutputStreamWriter osw = new OutputStreamWriter(os);
-                BufferedWriter bw = new BufferedWriter(osw);
-
-        while (true) {
+          //Sending the response back to the client.
+            OutputStream os = socket.getOutputStream();
+            OutputStreamWriter osw = new OutputStreamWriter(os);
+            BufferedWriter bw = new BufferedWriter(osw);
+            
+              while (true) {
             
             //receive
             String number = br.readLine();
             System.out.println(number);
             jta.append(number + "\n");
             //send    
-            bw.write("Hi Client " + i+ "\n");
+            bw.write("Hi Client! \n");
             bw.flush();
-            i++;
+        
         }
         }
-        catch(IOException ex){
-            System.out.println(ex);
+             catch(IOException ex){
+            System.err.println(ex);
         }
+        }
+       
+        }        
     }
 
-    
-
-}
 
