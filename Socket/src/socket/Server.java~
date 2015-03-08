@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package server;
+package socket;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -42,45 +42,35 @@ public static void main(String[] zero) throws IOException {
         setSize(500,300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
-        try{
+        
         //create server socket
         ServerSocket server = new ServerSocket(port);
         jta.append("Sever started at: "+ new Date()+'\n');
-                int i = 1;
-        //listen for connection request
+        int i = 0;
+        while (true) {
+            //listen for connection request
             Socket socket = server.accept();
             
-            jta.append("Client"+i+" with ip " + socket.getRemoteSocketAddress().toString() + " is connected.");
-            
-        //create data input and output streams
-        //reading inout stream from client
+            System.out.println("Client"+i+" with ip " + socket.getRemoteSocketAddress().toString() + " is connected.");
+            i++;
+            //reading inout stream from client
             InputStream is = socket.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
+            String number = br.readLine();
+            System.out.println(number);
             
-                    //Sending the response back to the client.
+             //Sending the response back to the client.
                 OutputStream os = socket.getOutputStream();
                 OutputStreamWriter osw = new OutputStreamWriter(os);
                 BufferedWriter bw = new BufferedWriter(osw);
+                bw.write("Hi Client " + i+ "\n");
+                bw.flush();
 
-        while (true) {
-            
-            //receive
-            String number = br.readLine();
-            System.out.println(number);
-            jta.append(number + "\n");
-            //send    
-            bw.write("Hi Client " + i+ "\n");
-            bw.flush();
-            i++;
         }
-        }
-        catch(IOException ex){
-            System.out.println(ex);
-        }
+
     }
 
     
 
 }
-

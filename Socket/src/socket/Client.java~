@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client;
+package socket;
 
 /**
  *
@@ -68,7 +68,8 @@ public class Client extends JFrame {
             is = socket.getInputStream();
             isr = new InputStreamReader(is);
              br = new BufferedReader(isr);
-    
+            String message = br.readLine();
+            System.out.println(message);
             
             //create output stream to send data to server
            os = socket.getOutputStream();
@@ -96,17 +97,16 @@ public class Client extends JFrame {
         public void actionPerformed(ActionEvent e){
             try{
                 //get the radius from text field
-                String name =jtf.getText().trim();
+                String name =(jtf.getText().trim());
                 
                 //send name to server
-            bw.write("\n"+name + "\n");
+            bw.write(name + "n");
             bw.flush();
-           //get message from server
-           String message = br.readLine();
-           jta.append(message + "\n");
+               /* //receive area
+                double area = in.readDouble();*/
                 
                 //display to text area
-               // jta.append("Name is "+ name+"\n");
+                jta.append("Name is "+ name+"\n");
                                
             }
             catch(IOException ex){
@@ -118,4 +118,3 @@ public class Client extends JFrame {
 
 
 }
-
