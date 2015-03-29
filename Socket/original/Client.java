@@ -22,32 +22,28 @@ import java.net.UnknownHostException;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.PrintWriter;
 import javax.swing.*;
 
 public class Client extends JFrame {
 //text field for receiving data
-
     private JTextField jtf = new JTextField();
-
+    
 //text area to display contents
-    private JTextArea jta = new JTextArea();
-    //input output variables
-    private OutputStream os;
-    private OutputStreamWriter osw;
-    private BufferedWriter bw;
-    private InputStream is;
-    private InputStreamReader isr;
-    private BufferedReader br;
-
-    public static void main(String[] zero) throws IOException {
-        new Client(8000);
-
+   private JTextArea jta = new JTextArea();
+   //input output variables
+   private OutputStream os;
+   private OutputStreamWriter osw;
+   private  BufferedWriter bw;
+   private InputStream is ;
+   private InputStreamReader isr;
+   private BufferedReader br;
+   
+      public static void main(String[] zero) throws IOException {
+         new Client(8000);
+         
     }
-
-    public Client(int port) {
+    public Client(int port)  {
         //panel to hold label and text field
-
         JPanel p = new JPanel();
         p.setLayout(new BorderLayout());
         p.add(new JLabel("Enter message"), BorderLayout.WEST);
@@ -55,36 +51,35 @@ public class Client extends JFrame {
         jtf.setHorizontalAlignment(JTextField.RIGHT);
         setLayout(new BorderLayout());
         add(p, BorderLayout.NORTH);
-        add(new JScrollPane(jta), BorderLayout.CENTER);
-
+        add( new JScrollPane(jta), BorderLayout.CENTER);
+        
         jtf.addActionListener(new TextFieldListener());
-
+        
         setTitle("Client");
-        setSize(500, 300);
+        setSize(500,300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
-
+        
         try {
             //create socket to connect to server
-            Socket socket = new Socket(InetAddress.getLocalHost()/*"81.57.249.139"*/, port);
-
-            //input stream to get data from server
+             Socket socket = new Socket(InetAddress.getLocalHost()/*"81.57.249.139"*/, port);
+            
+             //input stream to get data from server
             is = socket.getInputStream();
             isr = new InputStreamReader(is);
-            br = new BufferedReader(isr);
-
+             br = new BufferedReader(isr);
+    
+            
             //create output stream to send data to server
-            os = socket.getOutputStream();
+           os = socket.getOutputStream();
             osw = new OutputStreamWriter(os);
             bw = new BufferedWriter(osw);
-
-            while (true) {
-                //Récupérer le message du serveur
-                String message = br.readLine();
-                jta.append("\n" + message);
-            }
-
+            
+            
+            
+            
             //socket.close();
+
         } catch (UnknownHostException e) {
 
             e.printStackTrace();
@@ -96,26 +91,31 @@ public class Client extends JFrame {
         }
 
     }
-
-    private class TextFieldListener implements ActionListener {
-
+     private class TextFieldListener implements ActionListener{
         @Override
-        public void actionPerformed(ActionEvent e) {
-            try {
-
+        public void actionPerformed(ActionEvent e){
+            try{
                 //get the radius from text field
-                String name = jtf.getText().trim();
-
+                String name =jtf.getText().trim();
+                
                 //send name to server
-                bw.write("\n" + name + "\n");
-                bw.flush();
-                jta.setText("");
-
-            } catch (IOException ex) {
+            bw.write("\n"+name + "\n");
+            bw.flush();
+           //get message from server
+           String message = br.readLine();
+           jta.append(message + "\n");
+                
+                //display to text area
+               // jta.append("Name is "+ name+"\n");
+                               
+            }
+            catch(IOException ex){
                 System.err.println(ex);
             }
         }
-
+        
     }
 
+
 }
+
